@@ -15,7 +15,7 @@ sprintStartDate = args.sprintStartDate
 sprintEndDate = args.sprintEndDate
 
 # JQL command
-jql = f"project = \"LJ ADI IMPL DVA\" AND status in (Done, Closed) AND resolved >= \"{sprintStartDate}\" AND resolved < \"{sprintEndDate}\" and resolution = Fixed  and issuetype in (Task, Improvement)"
+jql = f"project = \"LJ ADI IMPL DVA\" AND status in (Done, Closed) AND resolved >= \"{sprintStartDate}\" AND resolved < \"{sprintEndDate}\" AND comment ~ \"merge request\" and resolution = Fixed  and issuetype in (Task, Improvement) ORDER BY resolved ASC"
 
 class GenerateReleaseNotes:
     def __init__(self):
@@ -26,11 +26,12 @@ class GenerateReleaseNotes:
         options.add_argument("--headless")
         options.add_argument("--enable-javascript")
         self.driver = webdriver.Firefox(options=options)
+        print("\033[32mFinished with webdirver setup\033[0m")
     def login(self):
         # Open the JIRA login page
         self.driver.get(self.url)
-        self.driver.minimize_window()
         time.sleep(1)
+        print("\033[32mReached: https://jira.adacta-fintech.com\033[0m")
         # Enter the username and password
         username_field = self.driver.find_element(By.ID, "login-form-username")
         password_field = self.driver.find_element(By.ID, "login-form-password")
@@ -39,7 +40,7 @@ class GenerateReleaseNotes:
         # Click the "Log In" button
         login_button = self.driver.find_element(By.ID, "login-form-submit")
         login_button.click()
-        print("\033[32mSuccessfully logged in!\033[0m")
+        print("\033[32mSuccessfully logged in\033[0m")
     def getData(self):
         self.driver.get("https://jira.adacta-fintech.com/issues/?jql=")
         time.sleep(1)
